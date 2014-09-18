@@ -18,11 +18,11 @@ module OmniAuth
         :alunmi_leaveSem => 'http://axschema.org/alunmi/leaveSem'
       }
       option :name, :ncu_portal_open_id
-      option :required, [AX[:user_roles]]
+      option :required, ["user_roles=#{AX[:user_roles]}"]
       option :optional, AX.reject { |k, v|
         k == :user_roles
       }.to_a.map { |ax|
-        ax[1]
+        "#{ax[0].to_s}=#{ax[1]}"
       }
       option :store, ::OpenID::Store::Memory.new
       option :identifier, 'http://portal.ncu.edu.tw/user/'
@@ -105,7 +105,7 @@ module OmniAuth
           :ename => ax.get_single(AX[:contact_ename]),
           :student_id => ax.get_single(AX[:student_id]),
           :alunmi_leaveSem => ax.get_single(AX[:alunmi_leaveSem])
-        }.inject({}){|h,(k,v)| h[k] = Array(v).first; h}.reject{|k,v| v.nil? || v == ''}
+        }.inject({}){|h,(k,v)| h[k.to_s] = Array(v).first; h}.reject{|k,v| v.nil? || v == ''}
       end
     end
   end
